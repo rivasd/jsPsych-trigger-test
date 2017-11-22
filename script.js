@@ -12,10 +12,10 @@ $(function(){
     var loop_node = {
         timeline : [{
             type: 'categorize-html',
-            trial_duration: 100,
+            trial_duration: 200,
             stimulus: '<div class="stim"> </div>',
             key_answer:76,
-            feedback_duration:0
+            feedback_duration:300
         }],
         loop_function: function(dat){
             jsPsych.pluginAPI.hardware({
