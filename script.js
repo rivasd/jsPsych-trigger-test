@@ -11,9 +11,11 @@ $(function(){
 
     var loop_node = {
         timeline : [{
-            type: 'categorize',
-            trial_duration: 50,
-            stimulus: '<div class="stim"> </div>'
+            type: 'categorize-html',
+            trial_duration: 100,
+            stimulus: '<div class="stim"> </div>',
+            key_answer:76,
+            feedback_duration:0
         }],
         loop_function: function(dat){
             jsPsych.pluginAPI.hardware({
@@ -21,7 +23,11 @@ $(function(){
                 'action': 'read',
                 'payload': 12
             });
-            return !latencies.length > 1000;
+            return !(latencies.length > 1000);
         }
     }
+
+    jsPsych.init({
+        timeline: [loop_node]
+    })
 });
