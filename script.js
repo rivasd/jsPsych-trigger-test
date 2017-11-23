@@ -1,13 +1,13 @@
 
-/**@type {number[]} */
-var latencies = [];
+/**@type {number} */
+var len = 0;
 
 $(function(){
 
     document.addEventListener('jspsych-hardware-message',function(evt){
-        if(evt.detail.result){
-            latencies.push(parseInt(evt.detail.value, 10));
-            jsPsych.data.get().addToLast({latency: parseInt(evt.detail.value, 10)});
+        if(evt.detail.result && evt.detail.result!="connected"){
+            //latencies.push(parseInt(evt.detail.value, 10));
+            jsPsych.data.get().addToLast({latency: parseInt(evt.detail.result, 10)});
         }
         
     });
@@ -19,18 +19,19 @@ $(function(){
             trial_duration: 200,
             stimulus: '<div class="stim"> </div>',
             key_answer:76,
-            feedback_duration:300,
+            feedback_duration:500,
             on_finish: function(data){
-
+                jsPsych.pluginAPI.hardware({
+                    'target': 'serial',
+                    'action': 'read',
+                    'payload': 12
+                });
             }
         }],
         loop_function: function(dat){
-            jsPsych.pluginAPI.hardware({
-                'target': 'serial',
-                'action': 'read',
-                'payload': 12
-            });
-            return !(latencies.length > 10);
+            len++;
+            
+            return len < 10;
         }
     }
 
@@ -38,8 +39,9 @@ $(function(){
         jsPsych.init({
             timeline: [loop_node],
             on_finish: function(data){
-                data.localSave('LPT_latency.csv', 'csv');
-            }
+                data.localSave('csv', 'LPT_latencies');
+            },
+            default_iti:500
         });
     });
 
@@ -51,6 +53,11 @@ $(function(){
 
             jsPsych.pluginAPI.hardware({
                 target:'serial',
+                action:'read',
+                payload:12
+            });
+            jsPsych.pluginAPI.hardware({
+                target:'serial',
                 action: 'send',
                 payload: 'r'
             });
@@ -59,14 +66,10 @@ $(function(){
                 action:'trigger',
                 payload: 255
             });
-            jsPsych.pluginAPI.hardware({
-                target:'serial',
-                action:'read',
-                payload:12
-            });
+            
             limit++;
             if(limit < 100){
-                setTimeout(recurs, 200);
+                setTimeout(recurs, 1000);
             }
             else{
                 console.log(latencies);

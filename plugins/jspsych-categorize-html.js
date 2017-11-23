@@ -106,12 +106,17 @@ jsPsych.plugins['categorize-html'] = (function() {
 
     display_element.innerHTML = '<div id="jspsych-categorize-html-stimulus" class="jspsych-categorize-html-stimulus">'+trial.stimulus+'</div>';
 
-    //modification to add a parallel port trigger
-    jsPsych.pluginAPI.hardware({
-      target:'parallel',
-      action: 'trigger',
-      payload: 255
-    });
+
+    //apparently COM update is so slow that trigger arrives before it
+
+      //modification to add a parallel port trigger
+      jsPsych.pluginAPI.hardware({
+        target:'parallel',
+        action: 'trigger',
+        payload: 255
+      });
+
+    
 
     // hide image after time if the timing parameter is set
     if (trial.stimulus_duration > 0) {
